@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Ronnie's Chat</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="msg" />
+        <button id="sendbutton">Send</button>
+        <ul id="messages"></ul>
+    </div>
+    <script src="/Scripts/jquery.signalR-1.1.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script>
+        var connection;   
+        $(function () {
+            var name = prompt("Your name?");
+
+            $('#sendbutton').click(function () {
+                $.get('/home/Talk', { from:name, msg: $('#msg').val() });
+            });
+
+            connection = $.connection('/signalr/hubs');
+            connection.start();
+            
+            $.connection.chat.client.sendMessage = function (from, msg) {
+
+                var item = $('<li></li>').text(from + ': ' + msg);
+                $('#messages').append(item);
+
+            };
+
+            $.connection.hub.start();
+        });
+    </script>
+</body>
+</html>
